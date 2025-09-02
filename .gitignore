@@ -1,17 +1,21 @@
-# Ignore virtual environment
+# Virtual env
 venv/
 
-# Ignore Python cache
+
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Ignore database (optional if you don’t want to share it)
+
+# Local DB
 db.sqlite3
 
-# Ignore media files (user uploads)
+
+# User uploads (not tracked)
 media/
 
-# Ignore collected static files
+
+# Collected static (OK to ignore)
 staticfiles/

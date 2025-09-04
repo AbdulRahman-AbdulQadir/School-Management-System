@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>School Management • Logout</title>
+  <meta name="description" content="Logout confirmation page UI for School Management System. No Django Template Language used." />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 antialiased min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <div class="bg-white dark:bg-gray-900 py-8 px-6 shadow rounded-2xl border border-gray-100 dark:border-gray-800 text-center">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="mx-auto h-12 w-12 text-red-500">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1m0-10V5" />
+      </svg>
+      <h1 class="mt-4 text-2xl font-bold">Logout</h1>
+      <p class="mt-2 text-gray-600 dark:text-gray-400">Are you sure you want to log out of your account?</p>
+
+      <div class="mt-6 flex flex-col sm:flex-row gap-3">
+        <a href="/" class="w-full sm:w-1/2 py-2.5 px-4 rounded-xl border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition text-gray-700 dark:text-gray-200 font-medium">Cancel</a>
+
+        <form action="/logout" method="post" class="w-full sm:w-1/2">
+          <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium transition">Logout</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

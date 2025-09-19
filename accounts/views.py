@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.db import transaction
@@ -171,3 +171,35 @@ def profile_update(request):
         messages.success(request, "Profile updated successfully!")
         return redirect("profile")
     return render(request, "accounts/profile_update.html", {"user": user})
+
+def update_password(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    if request.method == "POST":
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if not request.user.check_password(current_password):
+            messages.error(request, "Current password is incorrect")
+            return redirect('update_password')
+
+        if new_password != confirm_password:
+            messages.error(request, "New passwords do not match")
+            return redirect('update_password')
+        
+        if new_password == current_password:
+            messages.error(request, "New password must be different from the current password")
+            return redirect('update_password')
+
+        if len(new_password) < 8:
+            messages.error(request, "New password must be at least 8 characters long")
+            return redirect('update_password')
+        
+        request.user.set_password(new_password)
+        request.user.save()
+        update_session_auth_hash(request, request.user)  # Keep the user logged in after password change
+        messages.success(request, "Password updated successfully!")
+        return redirect('profile')
+
+    return render(request, 'accounts/update_password.html')

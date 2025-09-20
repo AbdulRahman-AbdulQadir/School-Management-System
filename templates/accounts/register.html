@@ -76,7 +76,25 @@
                   class="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm"
                   placeholder="you@example.com" />
         </div>
-
+        <div>
+          <label for="phone_number" class="block text-sm font-medium">Phone Number</label>
+          <input id="phone_number" name="phone_number" type="text" required
+          class="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm"
+          placeholder="Phone number" />
+        </div>
+        <div>
+          <label for="national_id" class="block text-sm font-medium">National ID</label>
+          <input id="national_id" name="national_id" type="text" required
+                  class="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm"
+                  placeholder="National ID" />
+        </div>
+        <div>
+          <label for="national_id_image" class="block text-sm font-medium">National ID photo</label>
+          <input id="national_id_image" name="national_id_image" type="file" required
+                  class="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm"
+                  placeholder="National ID Photo" />
+        </div>
+        
         <div>
           <label for="password" class="block text-sm font-medium">Password</label>
           <input id="password" name="password" type="password" required
@@ -92,16 +110,19 @@
         </div>
 
         <div>
-          <label for="role" class="block text-sm font-medium">Role</label>
-          <select id="role" name="role" required
-                  class="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm">
-            <option value="">Select role</option>
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-            <option value="parent">Parent</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
+  <label for="role" class="block text-sm font-medium">Role</label>
+  <select id="role" name="user_role" required
+          class="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white shadow-sm focus:border-brand-500 focus:ring-brand-500 sm:text-sm"
+          aria-required="true">
+    <option value="" disabled selected hidden>Select role</option>
+    <option value="student">Student</option>
+    <option value="teacher">Teacher</option>
+    <option value="parent">Parent</option>
+    <option value="admin">Admin</option>
+  </select>
+</div>
+
+
 
         <div class="flex items-center">
           <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 text-brand-600 focus:ring-brand-500 border-gray-300 rounded" />

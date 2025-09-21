@@ -109,7 +109,8 @@ def forgot_password(request):
             )
             return redirect('verify_code')
         except User.DoesNotExist:
-            messages.error(request, "This email is not registered")
+            error = "This email is not registered"
+            return render(request, 'accounts/forgot_password.html', {'error': error})
     return render(request, 'accounts/forgot_password.html')
 
 def verify_code(request):

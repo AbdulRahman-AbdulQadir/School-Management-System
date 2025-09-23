@@ -4,3 +4,5 @@ from django.shortcuts import render
 
 def home(request):
     return render(request, 'pages/home.html', {})
+def admin_dashboard(request):
+    return render(request, 'pages/admin_dashboard.html', {})

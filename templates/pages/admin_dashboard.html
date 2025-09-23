@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Load Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --brand-600: #6d28d9;
+      --brand-50: #ede9fe;
+    }
+    .bg-brand-600 { background-color: var(--brand-600); }
+    .text-brand-700 { color: #5b21b6; }
+    .text-brand-600 { color: var(--brand-600); }
+    .bg-brand-50 { background-color: var(--brand-50); }
+    .dark .dark\:bg-gray-900 { background-color: #111827; }
+    .shadow-soft { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.02); }
+    
+    /* Responsive Table Styles */
+    @media (max-width: 768px) {
+      table.responsive {
+        border: 0;
+      }
+      table.responsive thead {
+        display: none;
+      }
+      table.responsive tr {
+        display: block;
+        margin-bottom: 0.6rem;
+        border-bottom: 2px solid #e5e7eb;
+      }
+      table.responsive td {
+        display: block;
+        text-align: right;
+        border-bottom: 1px dotted #ccc;
+      }
+      table.responsive td:before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+      table.responsive td:last-child {
+        border-bottom: 0;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+
+  <!-- Main content container -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Header with Personalized Greeting -->
+    <div class="flex items-center justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl md:text-3xl font-extrabold">Welcome, Admin!</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Overview of school activity and quick actions.</p>
+      </div>
+      <div class="flex flex-col items-end">
+        <span id="current-time" class="text-lg font-medium"></span>
+        <span id="current-date" class="text-sm text-gray-500"></span>
+      </div>
+    </div>
+
+    <!-- KPI cards with clickable numbers -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <a href="#pending-requests" class="block p-4 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft transition-all hover:ring-2 ring-brand-600">
+        <p class="text-xs text-gray-500">Total users</p>
+        <p class="text-2xl font-bold">1,234</p>
+      </a>
+      <a href="#" class="block p-4 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft transition-all hover:ring-2 ring-brand-600">
+        <p class="text-xs text-gray-500">Attendance (today)</p>
+        <p class="text-2xl font-bold">92%</p>
+      </a>
+      <a href="#pending-requests" class="block p-4 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft transition-all hover:ring-2 ring-brand-600">
+        <p class="text-xs text-gray-500">Pending registrations</p>
+        <p class="text-2xl font-bold">7</p>
+      </a>
+      <a href="#quick-actions" class="block p-4 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft transition-all hover:ring-2 ring-brand-600">
+        <p class="text-xs text-gray-500">Quick actions</p>
+        <div class="mt-2 text-sm flex gap-2">
+            <a href="#" class="text-brand-600 font-semibold hover:underline">Enter attendance</a>
+            <span class="text-gray-400">•</span>
+            <a href="#" class="text-brand-600 font-semibold hover:underline">Post announcement</a>
+        </div>
+      </a>
+    </div>
+
+    <!-- Quick Actions as cards -->
+    <section id="quick-actions" class="py-6">
+      <div class="flex items-end justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-2xl md:text-3xl font-bold tracking-tight">Quick Actions</h2>
+          <p class="mt-2 text-gray-600 dark:text-gray-300">High-frequency tasks for admins, teachers, and students.</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a href="#" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg transition-shadow">
+          <div class="flex items-center gap-3">
+            <span class="inline-grid place-items-center w-10 h-10 rounded-xl bg-brand-50 text-brand-600">
+              <i class="fa-solid fa-calendar-days text-xl"></i>
+            </span>
+            <div>
+              <p class="font-semibold">Create timetable</p>
+              <p class="text-xs text-gray-500">Design class schedules</p>
+            </div>
+          </div>
+        </a>
+        <a href="#" class="group p-5 rounded-2xl bg-purple-600 border border-purple-700 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg transition-shadow">
+          <div class="flex items-center gap-3">
+            <span class="inline-grid place-items-center w-10 h-10 rounded-xl bg-white text-purple-600 transform translate-y-1">
+              <!-- Certificate / Document (purple on white, bolder) -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 7v10a2 2 0 0 0 2 2h14"></path>
+                <path d="M7 3h7l4 4v9"></path>
+                <path d="M8 14h8"></path>
+                <path d="M8 10h8"></path>
+                <path d="M16 19l2 2 4-4"></path>
+              </svg>
+            </span>
+
+            <div>
+              <p class="font-bold text-white">Record attendance</p>
+              <p class="text-xs text-purple-100">Mark daily presence</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="#" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg transition-shadow">
+          <div class="flex items-center gap-3">
+            <span class="inline-grid place-items-center w-10 h-10 rounded-xl bg-brand-50 text-brand-600">
+              <i class="fa-solid fa-bullhorn text-xl"></i>
+            </span>
+            <div>
+              <p class="font-semibold">Post announcement</p>
+              <p class="text-xs text-gray-500">Share updates schoolwide</p>
+            </div>
+          </div>
+        </a>
+        <a href="#" class="group p-5 rounded-2xl bg-purple-600 border border-purple-700 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg transition-shadow">
+          <div class="flex items-center gap-3">
+            <span class="inline-grid place-items-center w-10 h-10 rounded-xl bg-white text-purple-600">
+              <!-- Clipboard with check (purple on white, bolder) -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="8" y="2" width="8" height="4" rx="1"></rect>
+                <path d="M9 7h6v14H9z"></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+            </span>
+
+            <div>
+              <p class="font-bold text-white">Enroll student</p>
+              <p class="text-xs text-purple-100">Add new profiles</p>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Main content area with chart and table -->
+    <div class="grid md:grid-cols-2 gap-6 mt-6">
+      <!-- Attendance chart card -->
+      <div class="p-6 rounded-3xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft">
+        <div class="flex items-center justify-between mb-4">
+          <p class="font-medium">Attendance - last 7 days</p>
+          <p class="text-xs text-gray-500">Today: 92%</p>
+        </div>
+        <div id="attendance-sparkline" class="h-36">
+          <canvas id="attendanceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Pending registration table with search and bulk actions -->
+      <div id="pending-requests" class="p-6 rounded-3xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft">
+        <div class="flex items-center justify-between mb-4">
+          <p class="font-medium">Pending registration requests</p>
+          <a href="#" class="text-xs text-gray-500">View all</a>
+        </div>
+        
+        <!-- Search bar -->
+        <div class="mb-4">
+          <input type="text" id="searchInput" placeholder="Search by name or email..." class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-600">
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="flex items-center justify-between mb-4">
+          <label class="text-sm font-medium">
+            <input type="checkbox" id="selectAllCheckbox" class="mr-2 rounded-md text-brand-600">Select All
+          </label>
+          <div class="relative inline-block text-left">
+            <button id="bulkActionsBtn" class="px-3 py-1 rounded-xl border border-gray-200 dark:border-gray-700 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none">
+              Bulk Actions <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
+            </button>
+            <div id="bulkActionsMenu" class="absolute right-0 mt-2 w-40 origin-top-right bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700 rounded-xl shadow-lg hidden z-10">
+              <a href="#" id="bulkApprove" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-xl">Approve Selected</a>
+              <a href="#" id="bulkReject" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-xl">Reject Selected</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registration table -->
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm responsive">
+            <thead class="text-left text-xs text-gray-500">
+              <tr>
+                <th class="py-2"></th>
+                <th class="py-2">Name</th>
+                <th class="py-2">Email</th>
+                <th class="py-2">Requested</th>
+                <th class="py-2">Action</th>
+              </tr>
+            </thead>
+            <tbody id="registrationTableBody">
+              <!-- Dynamically populated rows will go here -->
+            </tbody>
+          </table>
+        </div>
+        <div id="no-requests-message" class="text-sm text-gray-500 mt-4 hidden">No pending requests.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-lg w-full max-w-sm">
+      <h3 class="text-lg font-bold mb-2">Confirm Action</h3>
+      <p id="modalMessage" class="text-sm text-gray-600 dark:text-gray-300 mb-4">Are you sure you want to [action] this registration?</p>
+      <div class="flex justify-end gap-2">
+        <button id="cancelModalBtn" class="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">Cancel</button>
+        <button id="confirmModalBtn" class="px-4 py-2 rounded-xl text-white bg-brand-600 hover:bg-brand-700">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-3 rounded-xl shadow-lg transition-transform transform translate-y-full opacity-0 duration-500 z-50">
+    <span id="toastMessage"></span>
+  </div>
+
+  <script>
+    // Mock data to simulate fetching from a server
+    let pendingRequests = [
+      { id: 1, full_name: "John Doe", email: "john.d@example.com", requested_at: "2023-09-20T10:00:00Z" },
+      { id: 2, full_name: "Jane Smith", email: "jane.s@example.com", requested_at: "2023-09-19T14:30:00Z" },
+      { id: 3, full_name: "Michael Jones", email: "m.jones@example.com", requested_at: "2023-09-18T09:15:00Z" },
+      { id: 4, full_name: "Emily Davis", email: "e.davis@example.com", requested_at: "2023-09-17T11:45:00Z" },
+      { id: 5, full_name: "Chris Brown", email: "c.brown@example.com", requested_at: "2023-09-16T08:20:00Z" },
+      { id: 6, full_name: "Sarah Miller", email: "s.m@example.com", requested_at: "2023-09-15T16:50:00Z" },
+      { id: 7, full_name: "David Wilson", email: "d.wilson@example.com", requested_at: "2023-09-14T10:10:00Z" },
+    ];
+
+    // Helper function to format the date
+    function formatDate(dateString) {
+      const options = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+      return new Date(dateString).toLocaleDateString('en-US', options);
+    }
+
+    // Function to render the table with the given data
+    function renderTable(data) {
+      const tableBody = document.getElementById('registrationTableBody');
+      const noRequestsMessage = document.getElementById('no-requests-message');
+      tableBody.innerHTML = '';
+      if (data.length === 0) {
+        noRequestsMessage.classList.remove('hidden');
+      } else {
+        noRequestsMessage.classList.add('hidden');
+        data.forEach(r => {
+          const row = document.createElement('tr');
+          row.classList.add('border-t');
+          row.innerHTML = `
+            <td class="py-3" data-label="Select"><input type="checkbox" class="registration-checkbox rounded-md text-brand-600" data-id="${r.id}"></td>
+            <td class="py-3" data-label="Name">${r.full_name}</td>
+            <td class="py-3" data-label="Email">${r.email}</td>
+            <td class="py-3 text-xs text-gray-500" data-label="Requested">${formatDate(r.requested_at)}</td>
+            <td class="py-3" data-label="Action">
+              <button class="px-3 py-1 rounded-lg bg-green-600 text-white text-xs approve-btn" data-id="${r.id}">Approve</button>
+              <button class="px-3 py-1 rounded-lg border border-gray-200 dark:border-gray-800 text-xs reject-btn" data-id="${r.id}">Reject</button>
+            </td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+    }
+
+    // Initial table render
+    renderTable(pendingRequests);
+
+    // Live clock and date
+    function updateClock() {
+      const now = new Date();
+      const time = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+      const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      document.getElementById('current-time').textContent = time;
+      document.getElementById('current-date').textContent = date;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('keyup', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredRequests = pendingRequests.filter(r => 
+        r.full_name.toLowerCase().includes(searchTerm) || 
+        r.email.toLowerCase().includes(searchTerm)
+      );
+      renderTable(filteredRequests);
+    });
+
+    // Toast notification function
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.textContent = message;
+      toast.classList.remove('translate-y-full', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-full', 'opacity-0');
+      }, 3000);
+    }
+
+    // Confirmation Modal logic
+    const confirmModal = document.getElementById('confirmModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const confirmModalBtn = document.getElementById('confirmModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    let currentAction = '';
+    let currentId = null;
+
+    document.getElementById('registrationTableBody').addEventListener('click', (e) => {
+      if (e.target.classList.contains('approve-btn') || e.target.classList.contains('reject-btn')) {
+        currentAction = e.target.classList.contains('approve-btn') ? 'approve' : 'reject';
+        currentId = parseInt(e.target.dataset.id);
+        modalMessage.textContent = `Are you sure you want to ${currentAction} this registration?`;
+        confirmModalBtn.textContent = currentAction.charAt(0).toUpperCase() + currentAction.slice(1);
+        confirmModalBtn.classList.remove('bg-brand-600', 'bg-red-600');
+        confirmModalBtn.classList.add(currentAction === 'approve' ? 'bg-green-600' : 'bg-red-600');
+        confirmModal.classList.remove('hidden');
+      }
+    });
+
+    cancelModalBtn.addEventListener('click', () => {
+      confirmModal.classList.add('hidden');
+    });
+
+    confirmModalBtn.addEventListener('click', () => {
+      // Simulate action
+      pendingRequests = pendingRequests.filter(r => r.id !== currentId);
+      renderTable(pendingRequests);
+      showToast(`Registration successfully ${currentAction}d.`);
+      confirmModal.classList.add('hidden');
+    });
+
+    // Bulk actions logic
+    const bulkActionsBtn = document.getElementById('bulkActionsBtn');
+    const bulkActionsMenu = document.getElementById('bulkActionsMenu');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const bulkApproveBtn = document.getElementById('bulkApprove');
+    const bulkRejectBtn = document.getElementById('bulkReject');
+
+    bulkActionsBtn.addEventListener('click', () => {
+      bulkActionsMenu.classList.toggle('hidden');
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!bulkActionsBtn.contains(e.target) && !bulkActionsMenu.contains(e.target)) {
+            bulkActionsMenu.classList.add('hidden');
+        }
+    });
+
+    selectAllCheckbox.addEventListener('change', (e) => {
+      document.querySelectorAll('.registration-checkbox').forEach(checkbox => {
+        checkbox.checked = e.target.checked;
+      });
+    });
+
+    bulkApproveBtn.addEventListener('click', () => {
+      const selectedIds = Array.from(document.querySelectorAll('.registration-checkbox:checked')).map(cb => parseInt(cb.dataset.id));
+      if (selectedIds.length > 0) {
+        pendingRequests = pendingRequests.filter(r => !selectedIds.includes(r.id));
+        renderTable(pendingRequests);
+        showToast(`${selectedIds.length} registration(s) approved.`);
+        selectAllCheckbox.checked = false;
+      }
+      bulkActionsMenu.classList.add('hidden');
+    });
+
+    bulkRejectBtn.addEventListener('click', () => {
+      const selectedIds = Array.from(document.querySelectorAll('.registration-checkbox:checked')).map(cb => parseInt(cb.dataset.id));
+      if (selectedIds.length > 0) {
+        pendingRequests = pendingRequests.filter(r => !selectedIds.includes(r.id));
+        renderTable(pendingRequests);
+        showToast(`${selectedIds.length} registration(s) rejected.`);
+        selectAllCheckbox.checked = false;
+      }
+      bulkActionsMenu.classList.add('hidden');
+    });
+
+    // Chart.js implementation for attendance sparkline
+    const ctx = document.getElementById('attendanceChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Attendance %',
+          data: [90, 92, 88, 95, 91, 93, 94],
+          borderColor: '#6d28d9',
+          backgroundColor: '#6d28d9',
+          tension: 0.4,
+          fill: false,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function(context) {
+                return context.raw + '%';
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            display: false,
+            grid: { display: false }
+          },
+          y: {
+            display: false,
+            grid: { display: false },
+            min: 80,
+            max: 100
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

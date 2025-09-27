@@ -10,14 +10,20 @@
             <span class="font-semibold tracking-tight text-gray-900 dark:text-white">EduManager</span>
         </a>
     </div>
-
-
         <div class="hidden md:flex items-center gap-6 text-sm">
             <a href="#overview" class="hover:text-brand-700 dark:hover:text-brand-300">Overview</a>
             <a href="#features" class="hover:text-brand-700 dark:hover:text-brand-300">Features</a>
             <a href="#announcements" class="hover:text-brand-700 dark:hover:text-brand-300">Announcements</a>
             <a href="#events" class="hover:text-brand-700 dark:hover:text-brand-300">Events</a>
             <a href="#contact" class="hover:text-brand-700 dark:hover:text-brand-300">Contact</a>
+
+            {# Admin Dashboard link for staff/superuser (desktop nav) #}
+            {% if user.is_authenticated and user.is_staff %}
+              <a href="{% url 'admin_dashboard' %}" class="hover:text-brand-700 dark:hover:text-brand-300 font-medium flex items-center gap-2">
+                Admin Dashboard
+                <span class="ml-2 inline-block px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200">Admin</span>
+              </a>
+            {% endif %}
         </div>
 
         <div class="flex items-center gap-2">
@@ -47,6 +53,21 @@
                                 style="display:none;">
                         <div class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">Welcome, {{ user.username }}</div>
                         <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+                        {# Admin section inside user dropdown for staff users #}
+                        {% if user.is_staff %}
+                          <div class="px-2 py-1 text-xs text-gray-400 dark:text-gray-500">Admin</div>
+                          <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">Manage Users</a>
+                          <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">Approvals</a>
+
+                          {# Superuser-only shortcut (optional) #}
+                          {% if user.is_superuser %}
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">Site Settings</a>
+                          {% endif %}
+
+                          <div class="border-t border-gray-100 dark:border-gray-800"></div>
+                        {% endif %}
+
                         <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">My Profile</a>
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">Settings</a>
                         <div class="border-t border-gray-100 dark:border-gray-800"></div>
@@ -60,7 +81,6 @@
             </button>
         </div>
     </div>
-
     <!-- Mobile sheet -->
     <div x-show="mobileOpen" x-transition class="md:hidden border-t border-gray-100 dark:border-gray-800 py-3 space-y-2">
         <a href="#overview" class="block px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Overview</a>
@@ -68,5 +88,17 @@
         <a href="#announcements" class="block px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Announcements</a>
         <a href="#events" class="block px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Events</a>
         <a href="#contact" class="block px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Contact</a>
+
+        {# Admin links in mobile sheet #}
+        {% if user.is_authenticated and user.is_staff %}
+          <div class="px-2 py-1 text-xs text-gray-400 dark:text-gray-500">Admin</div>
+          <a href="{% url 'admin_dashboard' %}" class="block px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Admin Dashboard</a>
+          <a href="#" class="block px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Manage Users</a>
+          <a href="#" class="block px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Approvals</a>
+
+          {% if user.is_superuser %}
+            <a href="#" class="block px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">Site Settings</a>
+          {% endif %}
+        {% endif %}
     </div>
 </nav>

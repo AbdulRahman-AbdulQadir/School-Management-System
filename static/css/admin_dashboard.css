@@ -1,0 +1,45 @@
+/* static/css/admin.css */
+
+/* Optional: custom brand variables (remove if you prefer Tailwind's brand colors) */
+:root {
+  --admin-brand-600: #6d28d9; /* only keep if you want the purple */
+  --admin-brand-50: #ede9fe;
+}
+
+/* small helpers that Tailwind may not cover or you want to keep named */
+.bg-admin-brand-600 { background-color: var(--admin-brand-600); }
+.text-admin-brand-600 { color: var(--admin-brand-600); }
+.bg-admin-brand-50 { background-color: var(--admin-brand-50); }
+
+/* shadow helper — Tailwind already has shadow-soft (because of your tailwind config),
+   but keep this if you want the fallback for non-Tailwind environments */
+.shadow-soft { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.02); }
+
+/* Responsive Table Styles: keep these — easier than recreating with Tailwind utilities */
+@media (max-width: 768px) {
+  table.responsive {
+    border: 0;
+  }
+  table.responsive thead {
+    display: none;
+  }
+  table.responsive tr {
+    display: block;
+    margin-bottom: 0.6rem;
+    border-bottom: 2px solid #e5e7eb;
+  }
+  table.responsive td {
+    display: block;
+    text-align: right;
+    border-bottom: 1px dotted #ccc;
+  }
+  table.responsive td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  table.responsive td:last-child {
+    border-bottom: 0;
+  }
+}

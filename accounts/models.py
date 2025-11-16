@@ -13,7 +13,9 @@ class CustomUser(AbstractUser):
     is_student = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     is_parent = models.BooleanField(default=False)
-
+    # Custom approval field — Django sets is_active=True automatically,
+    # so we use this field to know if the admin has approved the user.
+    is_member_of_this_school = models.BooleanField(default=False)
     
 
     def __str__(self):

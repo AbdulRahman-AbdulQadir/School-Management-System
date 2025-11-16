@@ -49,6 +49,7 @@ def register(request):
             messages.error(request, "Email is already in use")
             return redirect("register")
 
+        #User.objects.create_user(username=username, email=email, password=password)
         if User.objects.filter(national_id=national_id).exists():
             messages.error(request, "National ID already exists")
             return redirect("register")
@@ -82,8 +83,8 @@ def register(request):
                 user.is_staff = True
             user.save()
         messages.success(request, "Account created successfully! You can now log in.")
-        return redirect("login")
-
+        return redirect("home")
+        auth_login(request, user)
     return render(request, "accounts/register.html")
 
 def logout(request):

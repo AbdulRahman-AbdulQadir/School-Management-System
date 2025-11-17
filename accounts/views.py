@@ -83,8 +83,8 @@ def register(request):
                 user.is_staff = True
             user.save()
         messages.success(request, "Account created successfully! You can now log in.")
+        auth_login(request, user)       
         return redirect("home")
-        auth_login(request, user)
     return render(request, "accounts/register.html")
 
 def logout(request):

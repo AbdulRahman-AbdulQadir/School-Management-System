@@ -12,40 +12,56 @@
   <!-- Main content container -->
   <div class="max-w-7xl mx-auto px-4 py-8">
     <!-- Header with Personalized Greeting -->
-    <div class="flex items-center justify-between gap-4 mb-6">
-      <div>
-        <h1 class="text-2xl md:text-3xl font-extrabold">Welcome, Admin!</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-300">Overview of school activity and quick actions.</p>
-      </div>
-      <div class="flex flex-col items-end">
-        <span id="current-time" class="text-lg font-medium"></span>
-        <span id="current-date" class="text-sm text-gray-500"></span>
-      </div>
-    </div>
-    <!-- KPI cards with clickable numbers -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <a href="#pending-requests" class="block p-4 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft transition-all hover:ring-2 ring-brand-600">
-        <p class="text-xs text-gray-500">Total users</p>
-        <p class="text-2xl font-bold">1,234</p>
-      </a>
-      <a href="#" class="block p-4 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft transition-all hover:ring-2 ring-brand-600">
-        <p class="text-xs text-gray-500">Attendance (today)</p>
-        <p class="text-2xl font-bold">92%</p>
-      </a>
-      <a href="#pending-requests" class="block p-4 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft transition-all hover:ring-2 ring-brand-600">
-        <p class="text-xs text-gray-500">Pending registrations</p>
-        <p class="text-2xl font-bold">{{ pending_count }}</p>
-      </a>
-      <a href="#quick-actions" class="block p-4 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft transition-all hover:ring-2 ring-brand-600">
-        <p class="text-xs text-gray-500">Quick actions</p>
-        <div class="mt-2 text-sm flex gap-2">
-            <a href="#" class="text-brand-600 font-semibold hover:underline">Enter attendance</a>
-            <span class="text-gray-400">•</span>
-            <a href="#" class="text-brand-600 font-semibold hover:underline">Post announcement</a>
-        </div>
-      </a>
-    </div>
-    <!-- Quick Actions as cards -->
+    <!-- Enhanced Dashboard Header + KPIs -->
+<div class="flex items-center justify-between gap-4 mb-8">
+  <!-- Welcome Section -->
+  <div class="space-y-1">
+    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Welcome, Admin </h1>
+    <p class="text-sm text-gray-600 dark:text-gray-300">Overview of school activity and quick actions.</p>
+  </div>
+
+  <!-- Time + Date -->
+  <div class="flex flex-col items-end text-right bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl px-4 py-2 shadow-sm">
+    <span id="current-time" class="text-lg font-semibold"></span>
+    <span id="current-date" class="text-xs text-gray-500"></span>
+  </div>
+</div>
+
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+
+  <!-- Total Students -->
+  <a href="#pending-requests" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <p class="text-xs text-gray-500">Total Students</p>
+    <p class="text-3xl font-extrabold mt-1 group-hover:text-brand-600">{{ total_students }}</p>
+  </a>
+
+  <!-- Student Attendance Today -->
+  <a href="#" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <p class="text-xs text-gray-500">Students Attendance (today)</p>
+    <p class="text-3xl font-extrabold mt-1 group-hover:text-brand-600">92%</p>
+  </a>
+
+  <!-- Total Teachers -->
+  <a href="#pending-requests" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <p class="text-xs text-gray-500">Total Teachers</p>
+    <p class="text-3xl font-extrabold mt-1 group-hover:text-brand-600">{{ total_teachers }}</p>
+  </a>
+
+  <!-- Teacher Attendance Today -->
+  <a href="#" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <p class="text-xs text-gray-500">Teacher Attendance (today)</p>
+    <p class="text-3xl font-extrabold mt-1 group-hover:text-brand-600">92%</p>
+  </a>
+
+  <!-- Pending Registrations -->
+  <a href="#pending-requests" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <p class="text-xs text-gray-500">Pending registrations</p>
+    <p class="text-3xl font-extrabold mt-1 group-hover:text-brand-600">{{ pending_count }}</p>
+  </a>
+
+</div>
+    <!-- Improved Quick Actions Section: Cleaner, More Modern, Animated, Accessible -->
     <section id="quick-actions" class="py-6">
       <div class="flex items-end justify-between gap-4 mb-6">
         <div>
@@ -53,10 +69,13 @@
           <p class="mt-2 text-gray-600 dark:text-gray-300">High-frequency tasks for admins, teachers, and students.</p>
         </div>
       </div>
+
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <a href="#" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg transition-shadow">
+
+        <!-- Create Timetable -->
+        <a href="#" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
           <div class="flex items-center gap-3">
-            <span class="inline-grid place-items-center w-10 h-10 rounded-xl bg-brand-50 text-brand-600">
+            <span class="inline-grid place-items-center w-12 h-12 rounded-xl bg-brand-50 text-brand-600 group-hover:bg-brand-100 transition-colors">
               <i class="fa-solid fa-calendar-days text-xl"></i>
             </span>
             <div>
@@ -65,11 +84,13 @@
             </div>
           </div>
         </a>
-        <a href="#" class="group p-5 rounded-2xl bg-purple-600 border border-purple-700 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg transition-shadow">
-          <div class="flex items-center gap-3">
-            <span class="inline-grid place-items-center w-10 h-10 rounded-xl bg-white text-purple-600 transform translate-y-1">
-              <!-- Certificate / Document (purple on white, bolder) -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+        <!-- Record Attendance -->
+        <a href="#" class="group p-5 rounded-2xl bg-purple-600 border border-purple-700 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+          <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="flex items-center gap-3 relative z-10">
+            <span class="inline-grid place-items-center w-12 h-12 rounded-xl bg-white text-purple-600 shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 7v10a2 2 0 0 0 2 2h14"></path>
                 <path d="M7 3h7l4 4v9"></path>
                 <path d="M8 14h8"></path>
@@ -84,9 +105,11 @@
             </div>
           </div>
         </a>
-        <a href="#" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg transition-shadow">
+
+        <!-- Post Announcement -->
+        <a href="#" class="group p-5 rounded-2xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
           <div class="flex items-center gap-3">
-            <span class="inline-grid place-items-center w-10 h-10 rounded-xl bg-brand-50 text-brand-600">
+            <span class="inline-grid place-items-center w-12 h-12 rounded-xl bg-brand-50 text-brand-600 group-hover:bg-brand-100 transition-colors">
               <i class="fa-solid fa-bullhorn text-xl"></i>
             </span>
             <div>
@@ -95,11 +118,13 @@
             </div>
           </div>
         </a>
-        <a href="#" class="group p-5 rounded-2xl bg-purple-600 border border-purple-700 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-lg transition-shadow">
-          <div class="flex items-center gap-3">
-            <span class="inline-grid place-items-center w-10 h-10 rounded-xl bg-white text-purple-600">
-              <!-- Clipboard with check (purple on white, bolder) -->
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+        <!-- Enroll Student -->
+        <a href="#" class="group p-5 rounded-2xl bg-purple-600 border border-purple-700 dark:bg-gray-900 dark:border-gray-800 shadow-soft hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+          <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="flex items-center gap-3 relative z-10">
+            <span class="inline-grid place-items-center w-12 h-12 rounded-xl bg-white text-purple-600 shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="8" y="2" width="8" height="4" rx="1"></rect>
                 <path d="M9 7h6v14H9z"></path>
                 <path d="M9 12l2 2 4-4"></path>
@@ -111,79 +136,113 @@
             </div>
           </div>
         </a>
+
       </div>
     </section>
     <!-- Main content area with chart and table -->
     <div class="grid md:grid-cols-2 gap-6 mt-6">
-      <!-- Attendance chart card -->
+      <!-- Students Attendance chart card -->
       <div class="p-6 rounded-3xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft">
         <div class="flex items-center justify-between mb-4">
-          <p class="font-medium">Attendance - last 7 days</p>
+          <p class="font-medium">Students Attendance - Last 7 Days</p>
+          <p class="text-xs text-gray-500">Today: 88%</p>
+        </div>
+        <div id="students-attendance-sparkline" class="h-36">
+          <canvas id="studentsAttendanceChart"></canvas>
+        </div>
+      </div>
+      <!-- Teachers Attendance chart card -->
+      <div class="p-6 rounded-3xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft">
+        <div class="flex items-center justify-between mb-4">
+          <p class="font-medium">Teachers Attendance - Last 7 Days</p>
           <p class="text-xs text-gray-500">Today: 92%</p>
         </div>
-        <div id="attendance-sparkline" class="h-36">
-          <canvas id="attendanceChart"></canvas>
+        <div id="teachers-attendance-sparkline" class="h-36">
+          <canvas id="teachersAttendanceChart"></canvas>
         </div>
       </div>
+    </div> 
       <!-- Pending registration table with search and bulk actions -->
-      <div id="pending-requests" class="p-6 rounded-3xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft">
-        <div class="flex items-center justify-between mb-4">
-          <p class="font-medium">Pending registration requests</p>
-          <a href="#" class="text-xs text-gray-500">View all</a>
-        </div>
-        <!-- Search bar -->
-        <div class="mb-4">
-          <input type="text" id="searchInput" placeholder="Search by name or email..." class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-600">
-        </div>
-        <!-- Bulk Actions -->
-        <div class="flex items-center justify-between mb-4">
-          <label class="text-sm font-medium">
-            <input type="checkbox" id="selectAllCheckbox" class="mr-2 rounded-md text-brand-600">Select All
-          </label>
-          <div class="relative inline-block text-left">
-            <button id="bulkActionsBtn" class="px-3 py-1 rounded-xl border border-gray-200 dark:border-gray-700 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none">
-              Bulk Actions <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
-            </button>
-            <div id="bulkActionsMenu" class="absolute right-0 mt-2 w-40 origin-top-right bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700 rounded-xl shadow-lg hidden z-10">
-              <a href="#" id="bulkApprove" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-xl">Approve Selected</a>
-              <a href="#" id="bulkReject" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-b-xl">Reject Selected</a>
-            </div>
-          </div>
-        </div>
-        <!-- Registration table -->
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-sm responsive">
-            <thead class="text-left text-xs text-gray-500">
-              <tr>
-                <th class="py-2"></th>
-                <th class="py-2">Name</th>
-                <th class="py-2">Email</th>
-                <th class="py-2">Requested</th>
-                <th class="py-2">Action</th>
-              </tr>
-            </thead>
-            <tbody id="registrationTableBody">
-              <!-- Dynamically populated rows will go here -->
-            </tbody>
-          </table>
-        </div>
-        <div id="no-requests-message" class="text-sm text-gray-500 mt-4 hidden">No pending requests.</div>
+      <!-- Enhanced Pending Registration Requests UI with Phone Number Column -->
+<div id="pending-requests" class="p-6 rounded-3xl bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800 shadow-soft">
+  <div class="flex items-center justify-between mb-6">
+    <p class="font-semibold text-lg tracking-tight">Pending Registration Requests</p>
+    <a href="#" class="text-xs text-gray-500 hover:underline">View all</a>
+  </div>
+
+  <!-- Search + Filter Section -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+    <input type="text" id="searchInput" placeholder="Search name, email, or phone..." class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-brand-600">
+
+    <select id="sortSelect" class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 focus:outline-none">
+      <option value="recent">Sort by: Most Recent</option>
+      <option value="oldest">Oldest First</option>
+      <option value="name">Name (A-Z)</option>
+    </select>
+
+    <select id="filterSelect" class="w-full px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 focus:outline-none">
+      <option value="all">Filter: All</option>
+      <option value="today">Requested Today</option>
+      <option value="week">This Week</option>
+    </select>
+  </div>
+
+  <!-- Bulk Actions -->
+  <div class="flex items-center justify-between mb-4">
+    <label class="text-sm font-medium flex items-center">
+      <input type="checkbox" id="selectAllCheckbox" class="mr-2 rounded-md text-brand-600">Select All
+    </label>
+
+    <div class="relative inline-block text-left">
+      <button id="bulkActionsBtn" class="px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none flex items-center gap-1">
+        Bulk Actions <i class="fa-solid fa-chevron-down text-xs"></i>
+      </button>
+
+      <div id="bulkActionsMenu" class="absolute right-0 mt-2 w-44 origin-top-right bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700 rounded-xl shadow-lg hidden z-10">
+        <a href="#" id="bulkApprove" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Approve Selected</a>
+        <a href="#" id="bulkReject" class="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">Reject Selected</a>
       </div>
     </div>
   </div>
-  <!-- Confirmation Modal -->
-  <div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-lg w-full max-w-sm">
-      <h3 class="text-lg font-bold mb-2">Confirm Action</h3>
-      <p id="modalMessage" class="text-sm text-gray-600 dark:text-gray-300 mb-4">Are you sure you want to [action] this registration?</p>
-      <div class="flex justify-end gap-2">
-        <button id="cancelModalBtn" class="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">Cancel</button>
-        <button id="confirmModalBtn" class="px-4 py-2 rounded-xl text-white bg-brand-600 hover:bg-brand-700">Confirm</button>
-      </div>
+
+  <!-- Registration table -->
+  <div class="overflow-x-auto rounded-2xl border border-gray-100 dark:border-gray-800">
+    <table class="min-w-full text-sm">
+      <thead class="text-left text-xs text-gray-500">
+        <tr>
+          <th class="py-2"></th>
+          <th class="py-2">Name</th>
+          <th class="py-2">Email</th>
+          <th class="py-2">Phone</th>
+          <th class="py-2">Requested</th>
+          <th class="py-2">Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="registrationTableBody">
+      <!-- dynamically added -->
+      </tbody>
+    </table>
+  </div>
+
+  <div id="no-requests-message" class="text-sm text-gray-500 mt-4 hidden text-center py-4">No pending requests found.</div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden flex items-center justify-center z-50 backdrop-blur-sm">
+  <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-2xl w-full max-w-sm border border-gray-200 dark:border-gray-800">
+    <h3 class="text-lg font-bold mb-2">Confirm Action</h3>
+    <p id="modalMessage" class="text-sm text-gray-600 dark:text-gray-300 mb-5">Are you sure you want to [action] this request?</p>
+
+    <div class="flex justify-end gap-2">
+      <button id="cancelModalBtn" class="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800">Cancel</button>
+      <button id="confirmModalBtn" class="px-4 py-2 rounded-xl text-white bg-brand-600 hover:bg-brand-700">Confirm</button>
     </div>
   </div>
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-4 py-3 rounded-xl shadow-lg transition-transform transform translate-y-full opacity-0 duration-500 z-50">
-    <span id="toastMessage"></span>
-  </div> 
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="fixed bottom-5 right-5 bg-gray-800 text-white px-4 py-3 rounded-xl shadow-lg transition-all transform translate-y-10 opacity-0 duration-500 z-50">
+  <span id="toastMessage"></span>
+</div> 
 {% endblock %}

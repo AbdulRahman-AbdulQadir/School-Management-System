@@ -26,7 +26,12 @@ def admin_dashboard(request):
     # Count users who registered but are not yet approved by admin
     pending_count = CustomUser.objects.filter(is_member_of_this_school=False).count()
     
+    total_students = CustomUser.objects.filter(is_student=True).count()
+    total_teachers = CustomUser.objects.filter(is_teacher=True).count()
+    
     context = {
         "pending_count": pending_count,
+        "total_students": total_students,
+        "total_teachers": total_teachers,
     }
     return render(request, 'pages/admin_dashboard.html', context)

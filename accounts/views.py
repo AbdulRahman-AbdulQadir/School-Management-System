@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.db import transaction
+from django.contrib.auth import get_user_model
 import random
 
 User = get_user_model()
@@ -13,17 +14,26 @@ def login(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
+
         try:
             user_obj = User.objects.get(email=email)
-            user = authenticate(request, username=user_obj.username, password=password)        
+
+            if not user_obj.is_active or not user_obj.is_member_of_this_school:
+                messages.error(request, "Your account is awaiting admin approval.")
+                return redirect("login")
+
+            user = authenticate(request, username=user_obj.username, password=password)
+
             if user is not None:
-                auth_login(request, user)  
+                auth_login(request, user)
                 return redirect("home")
             else:
                 messages.error(request, "Incorrect password")
+
         except User.DoesNotExist:
             messages.error(request, "This email is not registered")
             return redirect("login")
+
     return render(request, "accounts/login.html")
 
 def register(request):
@@ -49,7 +59,6 @@ def register(request):
             messages.error(request, "Email is already in use")
             return redirect("register")
 
-        #User.objects.create_user(username=username, email=email, password=password)
         if User.objects.filter(national_id=national_id).exists():
             messages.error(request, "National ID already exists")
             return redirect("register")
@@ -61,8 +70,7 @@ def register(request):
         if user_role not in ['student', 'teacher', 'parent', 'admin']:
             messages.error(request, "Invalid role selected")
             return redirect("register")
-        
-        # use transaction to ensure atomicity(submit all or none)
+
         with transaction.atomic():
             user = User.objects.create_user(
                 username=username,
@@ -71,20 +79,23 @@ def register(request):
                 national_id=national_id,
                 phone_number=phone_number,
             )
+
+            user.is_active = False
+            user.is_member_of_this_school = False
             if national_id_image:
                 user.national_id_image = national_id_image
-            if user_role == 'student':
-                user.is_student = True
-            elif user_role == 'teacher':
-                user.is_teacher = True
-            elif user_role == 'parent':
-                user.is_parent = True
+
+         # if user_role == 'student':
+         #     user.is_student = True
+         # elif user_role == 'teacher':
+         #     user.is_teacher = True
+         # elif user_role == 'parent':
+         #     user.is_parent = True
             elif user_role == 'admin':
                 user.is_staff = True
             user.save()
-        messages.success(request, "Account created successfully! You can now log in.")
-        auth_login(request, user)       
-        return redirect("home")
+        messages.success(request, "Your registration request has been sent. Please wait for admin approval.")
+        return redirect("waiting_approval")
     return render(request, "accounts/register.html")
 
 def logout(request):
@@ -92,116 +103,151 @@ def logout(request):
     messages.success(request, "You have logged out successfully!")
     return redirect("login")
 
+@login_required
+def approve_user(request, user_id):
+    if not (request.user.is_staff or request.user.is_superuser):
+        return HttpResponse("Not allowed")
+
+    user = User.objects.get(id=user_id)
+    user.is_active = True
+    user.is_member_of_this_school = True
+    user.save()
+
+    User = get_user_model()
+    admins = User.objects.filter(is_staff=True)
+    emails = [admin.email for admin in admins if admin.email]
+
+    send_mail(
+        subject="New User Registration Request",
+        message=f"A new user '{user.username}' has registered and is waiting for your approval.",
+        from_email="alslaheziad@gmail.com",
+        recipient_list=emails,
+        fail_silently=True,
+)   
+
+    # Optional: send email
+    # send_mail(
+    #     'Account Approved',
+    #     'Your account has been approved. You can now log in.',
+    #     'admin@school.com',
+    #     [user.email],
+    # )
+
+    messages.success(request, f"{user.username} has been approved.")
+    return redirect("admin_dashboard")
+
+def waiting_approval(request):
+    return render(request, "accounts/waiting_approval.html")
+
 def forgot_password(request):
     if request.method == "POST":
         email = request.POST.get("email")
         try:
             user = User.objects.get(email=email)
             code = str(random.randint(10000, 99999))
+
             request.session['reset_email'] = email
             request.session['reset_code'] = code
-            # Send code to email
             send_mail(
                 'Password Reset Code',
                 f'Your reset code is: {code}',
                 'noreply@yourdomain.com',
                 [email],
-                fail_silently=False,
             )
+
             return redirect('verify_code')
         except User.DoesNotExist:
-            error = "This email is not registered"
-            return render(request, 'accounts/forgot_password.html', {'error': error})
+            return render(request, 'accounts/forgot_password.html', {
+                'error': "This email is not registered"
+            })
     return render(request, 'accounts/forgot_password.html')
 
 def verify_code(request):
     if request.method == "POST":
         code = request.POST.get("code")
+
         if code == request.session.get('reset_code'):
             return redirect('reset_password')
         else:
             messages.error(request, "Invalid code")
+
     return render(request, 'accounts/verify_code.html')
 
 def reset_password(request):
     if request.method == "POST":
         password = request.POST.get("password")
         confirm = request.POST.get("confirm_password")
+
         if password != confirm:
             messages.error(request, "Passwords do not match")
             return render(request, 'accounts/reset_password.html')
-        else:
-            email = request.session.get('reset_email')
-            user = User.objects.get(email=email)
-            user.set_password(password)
-            user.save()
-            messages.success(request, "Password has been reset successfully! You can now log in.")
-            request.session.pop('reset_email', None)
-            request.session.pop('reset_code', None)
-            return redirect('login')
+
+        email = request.session.get('reset_email')
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.save()
+
+        request.session.pop('reset_email', None)
+        request.session.pop('reset_code', None)
+
+        messages.success(request, "Password reset successful!")
+        return redirect('login')
+
     return render(request, 'accounts/reset_password.html')
 
-
 def profile(request):
-    user = request.user
-    if not user.is_authenticated:
+    if not request.user.is_authenticated:
         return redirect('login')
-    return render(request, "accounts/profile.html", {"user": user})
+
+    return render(request, "accounts/profile.html", {"user": request.user})
 
 @login_required
 def profile_update(request):
     user = request.user
+
     if request.method == "POST":
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        national_id = request.POST.get("national_id")
-        phone_number = request.POST.get("phone_number")
-        national_id_image = request.FILES.get("national_id_image")
-        profile_image = request.FILES.get("profile_image")
+        user.username = request.POST.get("username")
+        user.email = request.POST.get("email")
+        user.national_id = request.POST.get("national_id")
+        user.phone_number = request.POST.get("phone_number")
 
-        # Optionally add validation here
+        if request.FILES.get("national_id_image"):
+            user.national_id_image = request.FILES["national_id_image"]
+        if request.FILES.get("profile_image"):
+            user.profile_image = request.FILES["profile_image"]
 
-        user.username = username
-        user.email = email
-        user.national_id = national_id
-        user.phone_number = phone_number
-        if national_id_image:
-            user.national_id_image = national_id_image
-        if profile_image:
-            user.profile_image = profile_image
         user.save()
         messages.success(request, "Profile updated successfully!")
         return redirect("profile")
+
     return render(request, "accounts/profile_update.html", {"user": user})
 
 def update_password(request):
     if not request.user.is_authenticated:
         return redirect('login')
+
     if request.method == "POST":
-        current_password = request.POST.get("current_password")
-        new_password = request.POST.get("new_password")
-        confirm_password = request.POST.get("confirm_password")
+        current = request.POST.get("current_password")
+        new = request.POST.get("new_password")
+        confirm = request.POST.get("confirm_password")
 
-        if not request.user.check_password(current_password):
+        if not request.user.check_password(current):
             messages.error(request, "Current password is incorrect")
-            return redirect('update_password')
+            return redirect("update_password")
 
-        if new_password != confirm_password:
-            messages.error(request, "New passwords do not match")
-            return redirect('update_password')
-        
-        if new_password == current_password:
-            messages.error(request, "New password must be different from the current password")
-            return redirect('update_password')
+        if new != confirm:
+            messages.error(request, "Passwords do not match")
+            return redirect("update_password")
 
-        if len(new_password) < 8:
-            messages.error(request, "New password must be at least 8 characters long")
-            return redirect('update_password')
-        
-        request.user.set_password(new_password)
+        if len(new) < 8:
+            messages.error(request, "Password must be at least 8 characters")
+            return redirect("update_password")
+
+        request.user.set_password(new)
         request.user.save()
-        update_session_auth_hash(request, request.user)  # Keep the user logged in after password change
+        update_session_auth_hash(request, request.user)
+
         messages.success(request, "Password updated successfully!")
-        return redirect('profile')
+        return redirect("profile")
 
     return render(request, 'accounts/update_password.html')

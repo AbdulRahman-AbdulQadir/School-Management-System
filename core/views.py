@@ -23,14 +23,18 @@ def admin_dashboard(request):
         messages.error(request, 'You do not have permission to access the admin dashboard.')
         return render(request, 'pages/home.html', {})
 
-    # Count users who registered but are not yet approved by admin
     pending_count = CustomUser.objects.filter(is_member_of_this_school=False).count()
+    pending_students = CustomUser.objects.filter(is_student=True, is_member_of_this_school=False).count()
+    pending_teachers = CustomUser.objects.filter(is_teacher=True, is_member_of_this_school=False).count()
     
-    total_students = CustomUser.objects.filter(is_student=True).count()
-    total_teachers = CustomUser.objects.filter(is_teacher=True).count()
-    
+    total_students = CustomUser.objects.filter(is_student=True, is_member_of_this_school=True).count()
+    total_teachers = CustomUser.objects.filter(is_teacher=True, is_member_of_this_school=True).count()
+
+
     context = {
         "pending_count": pending_count,
+        "pending_students": pending_students,
+        "pending_teachers": pending_teachers,
         "total_students": total_students,
         "total_teachers": total_teachers,
     }

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,HttpResponse
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
 from django.contrib.auth import get_user_model, update_session_auth_hash
@@ -91,8 +91,8 @@ def register(request):
          #     user.is_teacher = True
          # elif user_role == 'parent':
          #     user.is_parent = True
-            elif user_role == 'admin':
-                user.is_staff = True
+            # elif user_role == 'admin':
+            #     user.is_staff = True
             user.save()
         messages.success(request, "Your registration request has been sent. Please wait for admin approval.")
         return redirect("waiting_approval")

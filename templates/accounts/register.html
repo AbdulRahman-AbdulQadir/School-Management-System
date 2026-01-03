@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -33,9 +34,9 @@
 <body class="bg-gray-50 dark:bg-gray-950 text-gray-800 dark:text-gray-100 antialiased" x-data="{ theme: 'light', init(){const s=localStorage.getItem('theme');if(s)this.theme=s;else if(window.matchMedia('(prefers-color-scheme: dark)').matches)this.theme='dark';}, toggle(){this.theme=this.theme==='dark'?'light':'dark';localStorage.setItem('theme',this.theme);} }" :class="{ 'dark': theme === 'dark' }" x-init="init()">
   <div class="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-      <a href="/" class="inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-bold text-2xl">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6"><path d="M6 2a2 2 0 0 0-2 2v15a3 3 0 0 0 3 3h12v-2H7a1 1 0 1 1 0-2h12V4a2 2 0 0 0-2-2H6z"/></svg>
-        EduTrack
+      <a href="/" class="inline-flex items-center gap-3 text-brand-600 dark:text-brand-400 font-bold text-2xl">
+          <img src="{% static 'images/Logo.png' %}" alt="EduTrack Logo" class="w-16 h-16 object-contain">
+          School Management System
       </a>
       <h2 class="mt-6 text-3xl font-extrabold tracking-tight">Create your account</h2>
       <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Already have an account? <a href="{% url 'login' %}" class="text-brand-600 hover:underline">Sign in</a></p>

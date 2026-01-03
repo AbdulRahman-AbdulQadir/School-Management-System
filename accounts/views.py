@@ -5,8 +5,11 @@ from django.contrib.auth import get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.db import transaction
-from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
 import random
+import time
 
 User = get_user_model()
 
@@ -18,8 +21,12 @@ def login(request):
         try:
             user_obj = User.objects.get(email=email)
 
-            if not user_obj.is_active or not user_obj.is_member_of_this_school:
-                messages.error(request, "Your account is awaiting admin approval.")
+            if not user_obj.is_member_of_this_school:
+                messages.error(request, "Your account is awaiting approval.")
+                return redirect("login")
+            elif not user_obj.is_active:
+                messages.error(request, "Your account is disabled.")
+
                 return redirect("login")
 
             user = authenticate(request, username=user_obj.username, password=password)
@@ -31,7 +38,7 @@ def login(request):
                 messages.error(request, "Incorrect password")
 
         except User.DoesNotExist:
-            messages.error(request, "This email is not registered")
+            messages.error(request, "Invalid email or password")
             return redirect("login")
 
     return render(request, "accounts/login.html")
@@ -85,12 +92,12 @@ def register(request):
             if national_id_image:
                 user.national_id_image = national_id_image
 
-         # if user_role == 'student':
-         #     user.is_student = True
-         # elif user_role == 'teacher':
-         #     user.is_teacher = True
-         # elif user_role == 'parent':
-         #     user.is_parent = True
+            if user_role == 'student':
+                user.is_student = True
+            elif user_role == 'teacher':
+                user.is_teacher = True
+            elif user_role == 'parent':
+                user.is_parent = True
             # elif user_role == 'admin':
             #     user.is_staff = True
             user.save()
@@ -104,37 +111,35 @@ def logout(request):
     return redirect("login")
 
 @login_required
-def approve_user(request, user_id):
+@require_POST
+def approve_user(request):
     if not (request.user.is_staff or request.user.is_superuser):
-        return HttpResponse("Not allowed")
+        return JsonResponse({'error': 'Not allowed'}, status=403)
 
-    user = User.objects.get(id=user_id)
+    user_id = request.POST.get('user_id')
+    user = get_object_or_404(
+        User,
+        id=user_id,
+        is_member_of_this_school=False
+    )
     user.is_active = True
     user.is_member_of_this_school = True
     user.save()
 
-    User = get_user_model()
-    admins = User.objects.filter(is_staff=True)
-    emails = [admin.email for admin in admins if admin.email]
+    # Email approved user (recommended)
+    if user.email:
+        send_mail(
+            subject="Your account has been approved",
+            message="Your account has been approved. You can now log in.",
+            from_email="noreply@school.com",
+            recipient_list=[user.email],
+            fail_silently=True,
+        )
 
-    send_mail(
-        subject="New User Registration Request",
-        message=f"A new user '{user.username}' has registered and is waiting for your approval.",
-        from_email="alslaheziad@gmail.com",
-        recipient_list=emails,
-        fail_silently=True,
-)   
+    # admins = User.objects.filter(is_staff=True)
+    # emails = [admin.email for admin in admins if admin.email]
 
-    # Optional: send email
-    # send_mail(
-    #     'Account Approved',
-    #     'Your account has been approved. You can now log in.',
-    #     'admin@school.com',
-    #     [user.email],
-    # )
-
-    messages.success(request, f"{user.username} has been approved.")
-    return redirect("admin_dashboard")
+    return JsonResponse({'success': True})
 
 def waiting_approval(request):
     return render(request, "accounts/waiting_approval.html")
@@ -144,54 +149,86 @@ def forgot_password(request):
         email = request.POST.get("email")
         try:
             user = User.objects.get(email=email)
-            code = str(random.randint(10000, 99999))
+            code = str(random.randint(100000, 999999))
 
             request.session['reset_email'] = email
             request.session['reset_code'] = code
+            request.session['reset_expires'] = time.time() + 300  # 5 minutes
             send_mail(
                 'Password Reset Code',
                 f'Your reset code is: {code}',
                 'noreply@yourdomain.com',
                 [email],
+                fail_silently=False,
             )
 
-            return redirect('verify_code')
         except User.DoesNotExist:
-            return render(request, 'accounts/forgot_password.html', {
-                'error': "This email is not registered"
-            })
+            # We do nothing here, but still redirect to 'verify_code' 
+            # so attackers don't know if the email exists.
+            pass
+        messages.info(request, "If an account exists with that email, a code has been sent.")
+        return redirect('verify_code')
     return render(request, 'accounts/forgot_password.html')
 
 def verify_code(request):
     if request.method == "POST":
-        code = request.POST.get("code")
+        input_code = request.POST.get("code")
+        stored_code = request.session.get('reset_code')
+        expires_at = request.session.get('reset_expires', 0)
 
-        if code == request.session.get('reset_code'):
+        # 2. Check if the code is expired
+        if time.time() > expires_at:
+            messages.error(request, "The code has expired. Please request a new one.")
+            return redirect('forgot_password')
+
+        # 3. Check if the code is correct
+        if stored_code and input_code == stored_code:
+            request.session['code_verified'] = True
             return redirect('reset_password')
         else:
-            messages.error(request, "Invalid code")
+            messages.error(request, "Invalid code.")
 
     return render(request, 'accounts/verify_code.html')
 
 def reset_password(request):
-    if request.method == "POST":
-        password = request.POST.get("password")
-        confirm = request.POST.get("confirm_password")
+    # 1. Security Check: Did they actually pass the verification?
+    if not request.session.get('code_verified'):
+        messages.error(request, "Please verify your email first.")
+        return redirect('forgot_password')
 
-        if password != confirm:
-            messages.error(request, "Passwords do not match")
+    if request.method == "POST":
+        new_password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+        email = request.session.get('reset_email')
+
+        if len(new_password) < 8:
+            messages.error(request, "Password must be at least 8 characters.")
             return render(request, 'accounts/reset_password.html')
 
-        email = request.session.get('reset_email')
-        user = User.objects.get(email=email)
-        user.set_password(password)
-        user.save()
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'accounts/reset_password.html')
 
-        request.session.pop('reset_email', None)
-        request.session.pop('reset_code', None)
+        try:
+            user = User.objects.get(email=email)
+            
+            # 2. Use transaction.atomic for database safety
+            with transaction.atomic():
+                user.set_password(new_password)
+                user.save()
 
-        messages.success(request, "Password reset successful!")
-        return redirect('login')
+            # 3. Clean up the session so these keys can't be reused
+            keys_to_delete = ['reset_code', 'reset_email', 'reset_expires', 'code_verified']
+            for key in keys_to_delete:
+                if key in request.session:
+                    del request.session[key]
+
+            messages.success(request, "Password reset successful. You can now log in.")
+            return redirect('login')
+
+        except User.DoesNotExist:
+            messages.error(request, "An error occurred. Please try again.")
+            return redirect('forgot_password')
 
     return render(request, 'accounts/reset_password.html')
 

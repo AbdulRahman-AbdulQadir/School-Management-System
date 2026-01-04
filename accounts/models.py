@@ -3,6 +3,11 @@ from django.contrib.auth.models import AbstractUser
 import uuid
 # Create your models here.
 class CustomUser(AbstractUser):
+    STATUS_CHOICES = [
+    ('pending', 'Pending'),
+    ('approved', 'Approved'),
+    ('rejected', 'Rejected'),
+]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(unique=True)
@@ -13,8 +18,7 @@ class CustomUser(AbstractUser):
     is_student = models.BooleanField(default=False)
     is_teacher = models.BooleanField(default=False)
     is_parent = models.BooleanField(default=False)
-    # Custom approval field — Django sets is_active=True automatically,
-    # so we use this field to know if the admin has approved the user.
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     is_member_of_this_school = models.BooleanField(default=False)
     
 

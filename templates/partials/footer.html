@@ -1,0 +1,40 @@
+{% load static %}
+<!-- Footer -->
+<div class="max-w-7xl mx-auto px-4 py-10 grid sm:grid-cols-2 md:grid-cols-4 gap-8">
+    <div>
+    <div class="flex items-center gap-2">
+        <span class="inline-grid place-items-center w-8 h-8 rounded-lg bg-brand-600 text-white">
+            <img src="{% static 'images/Logo.png' %}" 
+                alt="Icon description" 
+                class="w-8 h-8" 
+            />
+        </span>
+        <span class="font-semibold">EduManager</span>
+    </div>
+    <p class="mt-3 text-sm text-gray-600 dark:text-gray-300">A modern, accessible school management template.</p>
+    </div>
+    <div>
+    <p class="text-sm font-semibold">Platform</p>
+    <ul class="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+        <li><a href="#overview" class="hover:underline">Overview</a></li>
+        <li><a href="#features" class="hover:underline">Features</a></li>
+        <li><a href="#events" class="hover:underline">Events</a></li>
+    </ul>
+    </div>
+    <div>
+    <p class="text-sm font-semibold">Resources</p>
+    <ul class="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+        <li><a href="#" class="hover:underline">Docs</a></li>
+        <li><a href="#" class="hover:underline">Support</a></li>
+        <li><a href="#" class="hover:underline">Community</a></li>
+    </ul>
+    </div>
+    <div>
+    <p class="text-sm font-semibold">Contact</p>
+    <ul class="mt-3 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+        <li>Email: admin@example.com</li>
+        <li>Phone: +62 812-0000-0000</li>
+    </ul>
+    </div>
+</div>
+<div class="px-4 py-6 text-center text-xs text-gray-500 border-t border-gray-100 dark:border-gray-800">© <span x-text="year"></span> EduTrack. All rights reserved.</div>

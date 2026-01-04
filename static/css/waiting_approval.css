@@ -1,0 +1,124 @@
+/* --- DYNAMIC THEME VARIABLES --- */
+/* These variables define colors for Light Mode by default */
+:root {
+    --bg-page: #f8fafc; /* Slate 50 */
+    --grid-color: rgba(15, 23, 42, 0.04); /* Subtle dark grid for light mode */
+    --card-bg: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(148, 163, 184, 0.2);
+    --spotlight-glow: rgba(14, 165, 233, 0.15); /* Sky blue glow */
+    --spotlight-border-glow: rgba(14, 165, 233, 0.5);
+    --inner-content-bg: rgba(255, 255, 255, 0.85);
+    --text-primary: #0f172a;
+    --text-secondary: #64748b;
+}
+
+/* These override the variables when Dark Mode is active */
+.dark, .dark body {
+    --bg-page: #020617; /* Slate 950 */
+    --grid-color: rgba(255, 255, 255, 0.03); /* Subtle white grid */
+    --card-bg: rgba(15, 23, 42, 0.6);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --spotlight-glow: rgba(56, 189, 248, 0.15);
+    --spotlight-border-glow: rgba(56, 189, 248, 0.4);
+    --inner-content-bg: rgba(2, 6, 23, 0.8);
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+}
+
+/* --- WRAPPER STYLES --- */
+.approval-wrapper {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-page);
+    background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size: 30px 30px;
+    transition: background-color 0.3s ease;
+}
+
+/* --- SPOTLIGHT CARD LOGIC --- */
+.spotlight-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* The glowing gradient follows the mouse */
+.spotlight-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(
+        800px circle at var(--mouse-x) var(--mouse-y),
+        var(--spotlight-glow),
+        transparent 40%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.spotlight-card:hover::before {
+    opacity: 1;
+}
+
+/* Border Glow Effect */
+.spotlight-card::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(
+        600px circle at var(--mouse-x) var(--mouse-y),
+        var(--spotlight-border-glow),
+        transparent 40%
+    );
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+/* --- INNER CONTENT --- */
+.card-content {
+    position: relative;
+    z-index: 10;
+    background: var(--inner-content-bg);
+    margin: 1px; /* Gap for border glow */
+    border-radius: inherit;
+    transition: background-color 0.3s ease;
+}
+
+/* --- ANIMATIONS --- */
+.draw-path {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: draw 2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.scanner-line {
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+    position: absolute; top: 0; left: 0;
+    animation: scan 3s ease-in-out infinite;
+    opacity: 0.8;
+}
+@keyframes scan {
+    0% { top: 0%; opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+}
+
+.status-item {
+    opacity: 0; transform: translateX(-10px);
+    animation: slideIn 0.5s ease forwards;
+}
+.delay-1 { animation-delay: 1.2s; }
+.delay-2 { animation-delay: 1.6s; }
+.delay-3 { animation-delay: 2.0s; }
+@keyframes slideIn { to { opacity: 1; transform: translateX(0); } }

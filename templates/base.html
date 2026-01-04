@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}School Management System{% endblock %}</title>
+  <meta name="description" content="Clean, responsive UI template for a School Management System home page. No Django Template Language used." />
+  <!-- Tailwind CSS (Play CDN for quick prototyping). For production, compile locally. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Site-wide Tailwind runtime config -->
+  <script>
+    tailwind = window.tailwind || {};
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef6ff', 100: '#d9eaff', 200: '#bcd9ff', 300: '#91c1ff',
+              400: '#5da0ff', 500: '#347eff', 600: '#1f67f2', 700: '#1b56cc',
+              800: '#1a49a6', 900: '#183f88'
+            }
+          },
+          boxShadow: {
+            soft: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)'
+          }
+        }
+      }
+    };
+  </script>
+  <!-- Define app() before Alpine loads (defer so non-blocking) -->
+  <script defer src="{% static 'javascript/aside.js' %}?v=1"></script>
+  <script defer src="{% static 'javascript/profile_update.js' %}?v=1"></script>
+  <script defer src="{% static 'javascript/admin_dashboard.js' %}?v=1"></script>
+  <script defer src="{% static 'javascript/waiting_approval.js' %}?v=1"></script>
+  <!-- LOAD ALPINE ONCE (keep a single include) -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <!-- Page-specific head scripts (home.js will be injected by home.html) -->
+  {% block extra_head_scripts %}{% endblock %}
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/logo.png' %}?v=1">
+  <link rel="shortcut icon" href="{% static 'images/logo.png' %}?v=1">
+  <style>
+    /* Smooth scroll */
+    html { scroll-behavior: smooth; }
+    /* Hide number input spinners (if used later) */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50 text-gray-800 antialiased selection:bg-brand-100 selection:text-brand-800 dark:bg-gray-950 dark:text-gray-100"
+      x-data="app()" x-init="init()" :class="{ 'dark': theme === 'dark' }">
+  <header class="sticky top-0 z-40 backdrop-blur supports-backdrop-blur:bg-white/70 bg-white/80 border-b border-gray-100 dark:bg-gray-900/70 dark:border-gray-800">
+    {% include 'partials/nav.html' %}
+  </header>
+  {% if messages %}
+    <div class="fixed top-4 right-4 z-50">
+      {% for message in messages %}
+        <div 
+          class="
+            {% if 'success' in message.tags %} bg-green-500 {% endif %}
+            {% if 'info' in message.tags %} bg-blue-500 {% endif %}
+            {% if 'warning' in message.tags %} bg-yellow-500 {% endif %}
+            {% if 'error' in message.tags %} bg-red-500 {% endif %}
+            {% if 'success' not in message.tags and 'info' not in message.tags and 'warning' not in message.tags and 'error' not in message.tags %}
+              bg-gray-500
+            {% endif %}
+            text-white p-4 rounded-md shadow-lg mb-2 flex justify-between items-center"
+          role="alert">
+          <span>{{ message }}</span>
+          <button onclick="this.parentElement.style.display='none'" class="ml-4 text-white hover:text-gray-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+  <footer id="contact" class="mt-auto border-t border-gray-100 dark:border-gray-800">
+    {% include 'partials/footer.html' %}
+  </footer>
+</body>
+</html>

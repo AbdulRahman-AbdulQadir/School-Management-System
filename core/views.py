@@ -27,7 +27,8 @@ def admin_dashboard(request):
         return render(request, 'pages/home.html', {})
 
     # Fetching Data
-    pending_users_queryset = CustomUser.objects.filter(is_member_of_this_school=False).order_by('-date_joined')
+    pending_users_queryset = CustomUser.objects.filter(
+    is_member_of_this_school=False).exclude(status='rejected').order_by('-date_joined')
 
     # Prepare data for JS (Search/Sort functionality)
     # We convert the queryset to a list of dictionaries
@@ -56,14 +57,12 @@ def update_user_status(request):
         data = json.loads(request.body)
         user_ids = [uuid.UUID(uid) for uid in data.get('user_ids', [])]
         action = data.get('action') # 'approve' or 'reject'
+        queryset = CustomUser.objects.filter(id__in=user_ids)
 
         if action == 'approve':
-            CustomUser.objects.filter(id__in=user_ids).update(is_member_of_this_school=True)
-            CustomUser.objects.filter(id__in=user_ids).update(is_active=True)
+            queryset.update(is_member_of_this_school=True, is_active=True, status='approved')
         elif action == 'reject':
-            # You can either delete them or mark them as inactive
-            CustomUser.objects.filter(id__in=user_ids).update(is_member_of_this_school=False)
-            CustomUser.objects.filter(id__in=user_ids).update(is_active=False)
+            queryset.update(is_active=False, status='rejected', is_member_of_this_school=False)
         
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'}, status=400)
